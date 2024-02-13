@@ -8,6 +8,7 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    // Botón principal para expandir y contraer el stackView
     let mainButton: UIButton = {
         let button = UIButton()
         button.setTitle("△ ", for: .normal)
@@ -15,7 +16,7 @@ class ViewController: UIViewController {
         button.addTarget(self, action: #selector(mainButtonTapped), for: .touchUpInside)
         return button
     }()
-
+    // Botón de búsqueda, se mostrará al expandir el stackView
     let searchButton: UIButton = {
         let button = UIButton()
         let searchIcon = "🔍"
@@ -24,14 +25,14 @@ class ViewController: UIViewController {
         button.isHidden = true
         return button
     }()
-
+    // Vista separadora entre los botones
     let separatorView: UIView = {
         let separatorView = UIView()
         separatorView.backgroundColor = .white
         separatorView.widthAnchor.constraint(equalToConstant: 1).isActive = true
         return separatorView
     }()
-
+    //los botones y la separación
     let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -45,7 +46,9 @@ class ViewController: UIViewController {
 
     private var mainButtonHeightConstraint: NSLayoutConstraint?
     private var separatorWidthConstraint: NSLayoutConstraint?
-
+    
+    // Estado para rastrear si el stackView está expandido o contraído
+    
     var isExpanded: Bool = false
 
     override func viewDidLoad() {
@@ -56,10 +59,14 @@ class ViewController: UIViewController {
         stackView.addArrangedSubview(searchButton)
 
         view.addSubview(stackView)
+        
+        // Configurar restricciones y animar el stackView
 
         setupConstraints()
         animateStackView()
     }
+    
+    // Configurar las restricciones iniciales del stackView
 
     private func setupConstraints() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -74,6 +81,8 @@ class ViewController: UIViewController {
             separatorWidthConstraint!
         ])
     }
+    
+    // Animar el stackView para mostrar el botón de búsqueda al inicio de la aplicación
 
     private func animateStackView() {
         mainButton.setTitle("△ ", for: .normal)
@@ -90,6 +99,7 @@ class ViewController: UIViewController {
             })
         })
     }
+    // Método llamado cuando se toca el botón principal para expandir o contraer el stackView
 
     @objc private func mainButtonTapped() {
         if isExpanded {
@@ -106,6 +116,9 @@ class ViewController: UIViewController {
                 })
             })
         } else {
+            
+            // Expandir el stackView
+            
             mainButton.setTitle("△ ", for: .normal)
             mainButtonHeightConstraint?.constant = 40
             separatorWidthConstraint?.constant = 1
