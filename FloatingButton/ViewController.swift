@@ -18,7 +18,7 @@ class ViewController: UIViewController {
 
     let searchButton: UIButton = {
         let button = UIButton()
-        let searchIcon = "🔍" // Emoji de lupa
+        let searchIcon = "🔍"
         button.setTitle(searchIcon + " Buscar...", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.isHidden = true
@@ -38,7 +38,7 @@ class ViewController: UIViewController {
         stackView.spacing = 16
         stackView.backgroundColor = UIColor(red: 255/255, green: 0/255, blue: 0/255, alpha: 1.0)
         stackView.semanticContentAttribute = .forceRightToLeft
-        stackView.layer.cornerRadius = 10
+        stackView.layer.cornerRadius = 20
         stackView.layer.masksToBounds = true
         return stackView
     }()
@@ -58,9 +58,10 @@ class ViewController: UIViewController {
         view.addSubview(stackView)
 
         setupConstraints()
+        animateStackView()
     }
 
-    func setupConstraints() {
+    private func setupConstraints() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
 
         mainButtonHeightConstraint = mainButton.heightAnchor.constraint(equalToConstant: isExpanded ? 40 : 30)
@@ -74,7 +75,23 @@ class ViewController: UIViewController {
         ])
     }
 
-    @objc func mainButtonTapped() {
+    private func animateStackView() {
+        mainButton.setTitle("△ ", for: .normal)
+        mainButtonHeightConstraint?.constant = 40
+        separatorWidthConstraint?.constant = 1
+
+        UIView.animate(withDuration: 0.4, animations: {
+            self.view.layoutIfNeeded()
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
+                self.searchButton.isHidden = !self.searchButton.isHidden
+            }, completion: { _ in
+                self.isExpanded = true
+            })
+        })
+    }
+
+    @objc private func mainButtonTapped() {
         if isExpanded {
             mainButton.setTitle("△ ", for: .normal)
             mainButtonHeightConstraint?.constant = 30
@@ -89,7 +106,7 @@ class ViewController: UIViewController {
                 })
             })
         } else {
-            mainButton.setTitle("◁ ", for: .normal)
+            mainButton.setTitle("△ ", for: .normal)
             mainButtonHeightConstraint?.constant = 40
             separatorWidthConstraint?.constant = 1
             UIView.animate(withDuration: 0.4, animations: {
