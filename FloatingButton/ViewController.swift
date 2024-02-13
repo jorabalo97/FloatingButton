@@ -14,6 +14,7 @@ class ViewController: UIViewController {
         button.setTitle("△", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(mainButtonTapped), for: .touchUpInside)
+
         button.layer.cornerRadius = 20
         button.layer.masksToBounds = true
         return button
