@@ -11,14 +11,14 @@ class ViewController: UIViewController {
     // Botón principal para expandir y contraer el stackView
     let mainButton: UIButton = {
         let button = UIButton()
-        button.setTitle("△", for: .normal)
+        button.setTitle("⌃", for: .normal) // Cambiado de "△" a "⌃"
         button.setTitleColor(.white, for: .normal)
         button.addTarget(self, action: #selector(mainButtonTapped), for: .touchUpInside)
-
         button.layer.cornerRadius = 20
         button.layer.masksToBounds = true
         return button
     }()
+
     // Botón de búsqueda, se mostrará al expandir el stackView
     let searchButton: UIButton = {
         let button = UIButton()
@@ -30,6 +30,7 @@ class ViewController: UIViewController {
         button.layer.masksToBounds = true
         return button
     }()
+
     // Vista separadora entre los botones
     let separatorView: UIView = {
         let separatorView = UIView()
@@ -37,6 +38,7 @@ class ViewController: UIViewController {
         separatorView.widthAnchor.constraint(equalToConstant: 1).isActive = true
         return separatorView
     }()
+
     // Los botones y la separación
     let stackView: UIStackView = {
         let stackView = UIStackView()
@@ -58,15 +60,17 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupUI()
+        setupConstraints()
+        animateStackView()
+    }
+
+    private func setupUI() {
         stackView.addArrangedSubview(mainButton)
         stackView.addArrangedSubview(separatorView)
         stackView.addArrangedSubview(searchButton)
 
         view.addSubview(stackView)
-
-        // Configurar restricciones y animar el stackView
-        setupConstraints()
-        animateStackView()
     }
 
     // Configurar las restricciones iniciales del stackView
@@ -78,32 +82,27 @@ class ViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
-            // Ajustar la restricción del stackView para comenzar desde la esquina inferior derecha
             stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             mainButtonHeightConstraint!,
             separatorWidthConstraint!
         ])
-        
-       
     }
 
     // Animar el stackView para mostrar el botón de búsqueda al inicio de la aplicación
     private func animateStackView() {
-        mainButton.setTitle("△ ", for: .normal)
+        mainButton.setTitle("⌃ ", for: .normal)
         mainButtonHeightConstraint?.constant = 40
         separatorWidthConstraint?.constant = 1
 
-        // Configurar la posición inicial del stackView fuera de la pantalla
         stackView.transform = CGAffineTransform(translationX: view.bounds.width, y: view.bounds.height)
 
         UIView.animate(withDuration: 1.0, delay: 0.0, options: .curveEaseInOut, animations: {
-            // Restaurar la posición original del stackView durante la animación
             self.stackView.transform = .identity
             self.view.layoutIfNeeded()
             self.stackView.layer.cornerRadius = 20
         }, completion: { _ in
             UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
-                self.searchButton.isHidden = !self.searchButton.isHidden
+                self.searchButton.isHidden.toggle()
             }, completion: { _ in
                 self.isExpanded = true
             })
@@ -112,34 +111,22 @@ class ViewController: UIViewController {
 
     // Método llamado cuando se toca el botón principal para expandir o contraer el stackView
     @objc private func mainButtonTapped() {
-        if isExpanded {
-            mainButton.setTitle("△ ", for: .normal)
-            mainButtonHeightConstraint?.constant = 30
-            separatorWidthConstraint?.constant = 0
-            UIView.animate(withDuration: 0.4, animations: {
-                self.view.layoutIfNeeded()
-                self.stackView.layer.cornerRadius = 15
+        let newHeight = isExpanded ? 30 : 40
+        let newSeparatorWidth = isExpanded ? 0 : 1
+
+        mainButton.setTitle("⌃ ", for: .normal)
+        mainButtonHeightConstraint?.constant = CGFloat(newHeight)
+        separatorWidthConstraint?.constant = CGFloat(newSeparatorWidth)
+
+        UIView.animate(withDuration: 0.4, animations: {
+            self.view.layoutIfNeeded()
+            self.stackView.layer.cornerRadius = CGFloat(newHeight) / 2
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
+                self.searchButton.isHidden.toggle()
             }, completion: { _ in
-                UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
-                    self.searchButton.isHidden = !self.searchButton.isHidden
-                }, completion: { _ in
-                    self.isExpanded = false
-                })
+                self.isExpanded.toggle()
             })
-        } else {
-            mainButton.setTitle("△ ", for: .normal)
-            mainButtonHeightConstraint?.constant = 40
-            separatorWidthConstraint?.constant = 1
-            UIView.animate(withDuration: 0.4, animations: {
-                self.view.layoutIfNeeded()
-                self.stackView.layer.cornerRadius = 20
-            }, completion: { _ in
-                UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
-                    self.searchButton.isHidden = !self.searchButton.isHidden
-                }, completion: { _ in
-                    self.isExpanded = true
-                })
-            })
-        }
+        })
     }
 }
