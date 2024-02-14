@@ -90,20 +90,41 @@ class ViewController: UIViewController {
     
     // Animar el stackView para mostrar el botón de búsqueda al inicio de la aplicación
     private func animateStackView() {
+        
+        // Ajusta la altura del mainButton
         mainButtonHeightConstraint?.constant = 40
+        
+        // Ajusta el ancho de la vista separadora
         separatorWidthConstraint?.constant = 0
         
+        // Aplica una transformación de desplazamiento al stackView para colocarlo fuera de la pantalla
         stackView.transform = CGAffineTransform(translationX: view.bounds.width, y: view.bounds.height)
         
+        // Inicia la primera animación
         UIView.animate(withDuration: 1.0, delay: 0.0, options: .curveEaseInOut, animations: {
+            
+            // Revierte la transformación, devuelve el stackView a su posición original
             self.stackView.transform = .identity
+            
+            // Actualiza el diseño para aplicar los cambios
             self.view.layoutIfNeeded()
+            
+            // Redondea las esquinas del stackView
             self.stackView.layer.cornerRadius = 20
         }, completion: { _ in
+            
+            // Comienza la segunda animación dentro del bloque de finalización de la primera animación
             UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
+                
+                // Muestra u oculta el botón de búsqueda
                 self.searchButton.isHidden.toggle()
+                
             }, completion: { _ in
+                
+                // Establece el estado de expansión a true
                 self.isExpanded = true
+                
+                // Llama a la función para animar la vista separadora
                 self.animateSeparator()
             })
         })
@@ -111,29 +132,47 @@ class ViewController: UIViewController {
     
     private func animateSeparator() {
         separatorWidthConstraint?.constant = 1
+        
+        // Inicialmente hace invisible la vista separadora en términos de ancho
         separatorView.transform = CGAffineTransform(scaleX: 0, y: 1)
 
+        
         UIView.animate(withDuration: 0.4, animations: {
+            
+            // Revierte la transformación de escala, volviendo a la escala original
             self.separatorView.transform = .identity
+            
             self.view.layoutIfNeeded()
         })
     }
     
     @objc private func mainButtonTapped() {
+        
+        // Calcula la nueva altura del mainButton basándose en el estado de expansión
         let newHeight = isExpanded ? 30 : 40
+        
+        // Calcula el nuevo ancho de la vista separadora basándose en el estado de expansión
         let newSeparatorWidth = isExpanded ? 0 : 1
         
         mainButtonHeightConstraint?.constant = CGFloat(newHeight)
         
+        // Inicia la animación principal
         UIView.animate(withDuration: 0.4, animations: {
+            
+            // Actualiza el diseño para aplicar cambios en tiempo real
             self.view.layoutIfNeeded()
             self.stackView.layer.cornerRadius = CGFloat(newHeight) / 2
+            
         }, completion: { _ in
+            
+            // Inicia una segunda animación
             UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
                 self.searchButton.isHidden.toggle()
                 self.separatorWidthConstraint?.constant = CGFloat(newSeparatorWidth)
                 self.view.layoutIfNeeded()
             }, completion: { _ in
+                
+                // Invierte el estado de expansión del stackView
                 self.isExpanded.toggle()
             })
         })
