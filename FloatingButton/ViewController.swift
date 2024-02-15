@@ -26,6 +26,7 @@ class ViewController: UIViewController {
         button.setTitle(searchIcon + " Buscar", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.isHidden = true
+        button.contentEdgeInsets = UIEdgeInsets( top: 0, left: 10, bottom: 0, right: 0)
         button.layer.cornerRadius = 20
         button.layer.masksToBounds = true
         return button
@@ -43,11 +44,16 @@ class ViewController: UIViewController {
     let stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.spacing = 5
+        stackView.spacing = 10
         stackView.backgroundColor = UIColor(red: 255/255, green: 0/255, blue: 0/255, alpha: 1.0)
         stackView.semanticContentAttribute = .forceRightToLeft
         stackView.layer.cornerRadius = 20
         stackView.layer.masksToBounds = true
+        
+        let spacerView = UIView()
+        stackView.addArrangedSubview(spacerView)
+        
+        
         return stackView
     }()
     
@@ -83,6 +89,7 @@ class ViewController: UIViewController {
         NSLayoutConstraint.activate([
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50),
             stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            
             mainButtonHeightConstraint!,
             separatorWidthConstraint!
         ])
