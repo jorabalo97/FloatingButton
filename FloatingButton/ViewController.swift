@@ -137,12 +137,45 @@ class ViewController: UIViewController {
         })
     }
     
+    private func animateStackViewExpansion() {
+        mainButtonHeightConstraint?.constant = 40
+        
+        separatorWidthConstraint?.constant = 1
+        
+        self.searchButton.isHidden = false
+        
+        
+        
+        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseOut, animations: {
+            self.view.layoutIfNeeded()
+            self.stackView.layer.cornerRadius = 20
+        }, completion: { _ in
+            self.animateSeparator()
+        })
+    }
+    
+    private func animateStackViewContraction() {
+          mainButtonHeightConstraint?.constant = 40
+          
+          separatorWidthConstraint?.constant = 1
+          
+          self.searchButton.isHidden = true 
+          
+          
+          
+          UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseOut, animations: {
+              self.view.layoutIfNeeded()
+              self.stackView.layer.cornerRadius = 20
+          }, completion: { _ in
+              self.animateSeparator()
+          })
+      }
     private func animateSeparator() {
         separatorWidthConstraint?.constant = 1
         
         // Inicialmente hace invisible la vista separadora en términos de ancho
         separatorView.transform = CGAffineTransform(scaleX: 0, y: 1.5)
-
+        
         
         UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseInOut, animations: {
             
@@ -161,40 +194,18 @@ class ViewController: UIViewController {
                 })
             })
             
-        
+            
         })
     }
     
     @objc private func mainButtonTapped() {
-        
-        // Calcula la nueva altura del mainButton basándose en el estado de expansión
-        let newHeight = isExpanded ? 30 : 40
-        
-        // Calcula el nuevo ancho de la vista separadora basándose en el estado de expansión
-        let newSeparatorWidth = isExpanded ? 0 : 1
-        
-        mainButtonHeightConstraint?.constant = CGFloat(newHeight)
-        
-        // Inicia la animación principal
-        UIView.animate(withDuration: 0.4, animations: {
-            
-            // Actualiza el diseño para aplicar cambios en tiempo real
-            self.view.layoutIfNeeded()
-            self.stackView.layer.cornerRadius = CGFloat(newHeight) / 2
-            
-        }, completion: { _ in
-            
-            // Inicia una segunda animación
-           
-                self.searchButton.isHidden.toggle()
-                self.separatorWidthConstraint?.constant = CGFloat(newSeparatorWidth)
-            self.animateSeparator()
-            
-            
-                
-                // Invierte el estado de expansión del stackView
-                self.isExpanded.toggle()
-            })
+        if isExpanded {
+            animateStackViewContraction()
+        } else {
+            animateStackViewExpansion()
         }
+        isExpanded.toggle()
     }
-
+    
+    
+}
