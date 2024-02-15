@@ -134,15 +134,27 @@ class ViewController: UIViewController {
         separatorWidthConstraint?.constant = 1
         
         // Inicialmente hace invisible la vista separadora en términos de ancho
-        separatorView.transform = CGAffineTransform(scaleX: 0, y: 1)
+        separatorView.transform = CGAffineTransform(scaleX: 0, y: 1.5)
 
         
-        UIView.animate(withDuration: 0.4, animations: {
+        UIView.animate(withDuration: 0.4, delay: 0, options: .curveEaseInOut, animations: {
             
             // Revierte la transformación de escala, volviendo a la escala original
-            self.separatorView.transform = .identity
+            self.separatorView.transform = CGAffineTransform(scaleX: 1, y: 0.2)
             
             self.view.layoutIfNeeded()
+        }, completion:  { _ in
+            UIView.animate(withDuration: 0.6,delay: 0, options: .curveEaseInOut, animations: {
+                self.separatorView.transform = CGAffineTransform(scaleX: 1, y: 0.6 )
+                self.view.layoutIfNeeded()
+            }, completion:  { _ in
+                UIView.animate(withDuration: 0.4,delay: 0,  options: .curveEaseInOut, animations: {
+                    self.separatorView.transform = .identity
+                    self.view.layoutIfNeeded()
+                })
+            })
+            
+        
         })
     }
     
@@ -166,15 +178,16 @@ class ViewController: UIViewController {
         }, completion: { _ in
             
             // Inicia una segunda animación
-            UIView.animate(withDuration: 0.2, delay: 0, options: [], animations: {
+           
                 self.searchButton.isHidden.toggle()
                 self.separatorWidthConstraint?.constant = CGFloat(newSeparatorWidth)
-                self.view.layoutIfNeeded()
-            }, completion: { _ in
+            self.animateSeparator()
+            
+            
                 
                 // Invierte el estado de expansión del stackView
                 self.isExpanded.toggle()
             })
-        })
+        }
     }
-}
+
